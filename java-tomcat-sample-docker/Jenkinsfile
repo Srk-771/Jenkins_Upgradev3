@@ -10,22 +10,21 @@ pipeline {
                     echo "Now Archiving the Artifacts...."
                     archiveArtifacts artifacts: '**/*.war'
                 }
+     
             }
         }
-        stage('Deploy in Staging Environment'){
-            steps{
-                build job: 'Deploy_Application_Staging_Env'
 
-            }
-            
+
+	stage('create Tomcat Docker Image'){
+	   steps(
+	       sh "pwd"
+	       sh "ls -a"
+	       sh "docker build ./java-tomcat-sample-docker -t tomcatsamplewebapp:${env.BUILD_ID}"	
+
+           }
+
         }
-        stage('Deploy to Production'){
-            steps{
-                timeout(time:5, unit:'DAYS'){
-                    input message:'Approve PRODUCTION Deployment?'
-                }
-                build job: 'Deploy_Application_Prod_Env'
-            }
-        }
+
     }
+
 }
